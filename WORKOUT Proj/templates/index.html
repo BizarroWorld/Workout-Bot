@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Workout Chatbot</h1>
+        <div class="directions">
+            <p>Welcome to the Workout Chatbot!</p>
+            <ol>
+                <li>Please select your equipment and muscle group:</li>
+                <li> Type your choice like "1A" for Dumbbells and Abs.</li>
+                <li>Press "Send" to receive a workout recommendation.</li>
+            </ol>
+        </div>
+        <div class="options">
+            <div>
+                <h2>Equipment Options:</h2>
+                <ul>
+                    <li>1. Dumbbells</li>
+                    <li>2. Barbells</li>
+                    <li>3. Pull-up-bar</li>
+                    <li>4. Bench</li>
+                    <li>5. Cable</li>
+                    <li>6. Kettlebells</li>
+                </ul>
+            </div>
+            <div>
+                <h2>Muscle Group Options:</h2>
+                <ul>
+                    <li>A: Abs</li>
+                    <li>B: Back</li>
+                    <li>C: Biceps</li>
+                    <li>D: Chest</li>
+                    <li>E: Hamstrings</li>
+                    <li>F: Quadriceps</li>
+                    <li>G: Shoulders</li>
+                    <li>H: Triceps</li>
+                </ul>
+            </div>
+        </div>
+        <div class="chat-box">
+            <div id="chat-log"></div>
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Type your message here" required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const chatLog = document.getElementById('chat-log');
+        const userInput = document.getElementById('user-input');
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = userInput.value;
+            userInput.value = '';
+
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('user-message');
+            userMessageDiv.textContent = userMessage;
+            chatLog.appendChild(userMessageDiv);
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `message=${userMessage}`
+            });
+            const data = await response.json();
+
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.classList.add('bot-message');
+            botMessageDiv.textContent = data.response;
+            chatLog.appendChild(botMessageDiv);
+        });
+    </script>
+</body>
+</html>
